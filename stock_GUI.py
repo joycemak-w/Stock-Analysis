@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import numpy as np
 import pandas as pd
-from stock import daily_return_chart, moving_average_chart, relation_pv_chart, symbols
+from stock import daily_return_chart, moving_average_chart, relation_pv_chart, rsi_macd_chart, symbols
 
 
 # Initialize Tkinter and Matplotlib Figure
@@ -58,6 +58,10 @@ def filter_data(show_save):
         ax.grid(True)
         if show_save == 'save':
             fig.savefig(f'./relation_pv_{selected_stock}.png')
+    # elif filter_option == 'RSI & MACD':
+    #     rsi_macd_chart(selected_stock)
+    #     if show_save == 'save':
+    #         messagebox.showinfo(title='Notice', message="This Option do not support SAVE")
     if filter_option != '' and show_save == 'show':
         canvas.draw()
     elif filter_option != '' and show_save =='save':
