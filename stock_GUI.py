@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import numpy as np
 import pandas as pd
-from stock import daliy_return_chart, moving_average_chart, relation_pv_chart
+from stock import daily_return_chart, moving_average_chart, relation_pv_chart, symbols
 
 
 # Initialize Tkinter and Matplotlib Figure
@@ -12,38 +12,42 @@ root = tk.Tk()
 fig, ax = plt.subplots()
 
 # Tkinter Application
-frame = tk.Frame(root)
 label = tk.Label(text="Stock Analysis")
 label.config(font=("Courier", 32))
 label.pack()
-frame.pack()
+
+frame = tk.Frame(root)
+frame.pack(side=tk.LEFT, fill=tk.Y)
+# frame.pack()
 
 filter_var = tk.StringVar()
-filter_options = ['Daliy Return', 'Moving Average', 'Close price VS Volume']
+filter_options = ['Daily Return', 'Moving Average', 'Close price VS Volume']
 filter_combobox = ttk.Combobox(frame, textvariable=filter_var, values=filter_options)
-filter_combobox.pack(pady=10)
+filter_combobox.pack(padx=10, pady=10)
 
 stock_var = tk.StringVar()
-stock_options = ["2888.HK", "0005.HK", "2388.HK"]
+stock_options = list(symbols.values())
 stock_combobox = ttk.Combobox(frame, textvariable=stock_var, values=stock_options)
-stock_combobox.pack(pady=10)
+stock_combobox.pack(padx=10,pady=10)
 
 # Create Canvas
 canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+canvas.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH, expand=1)
 
 # Plot data on Matplotlib Figure
 def filter_data(show_save):
     selected_stock = stock_var.get()
+    selected_stock = [i for i in symbols if symbols[i]==selected_stock][0]
     filter_option = filter_var.get()
+    print(filter_option)
     # result_text.delete('1.0', tk.END)
     if ax.lines:
         ax.clear()  # Clear previous plot
-    if filter_option == 'Daliy Return':
-        daliy_return_chart(ax,selected_stock)
+    if filter_option == 'Daily Return':
+        daily_return_chart(ax,selected_stock)
         ax.grid(True)
         if show_save == 'save':
-            fig.savefig(f'./daliy_return_{selected_stock}.png')
+            fig.savefig(f'./daily_return_{selected_stock}.png')
     elif filter_option == 'Moving Average':
         moving_average_chart(ax,selected_stock)
         ax.grid(True)
