@@ -36,7 +36,7 @@ def fetch_stock_data():
     data = pd.DataFrame()
     for symbol in symbols:
         ticker = yf.Ticker(symbol)
-        stock_data = ticker.history(period="1y")
+        stock_data = ticker.history(period="2y")
         stock_data['symbol'] = symbol
         data = pd.concat([data, stock_data])
     dates = []
