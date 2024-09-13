@@ -80,10 +80,10 @@ def filter_show():
 def filter_save():
     filter_data('save')
 
-show_button = tk.Button(frame, text="Filter", command=filter_show)
+show_button = tk.Button(frame, text="Show Result", command=filter_show)
 show_button.pack(pady=10)
 
-save_button = tk.Button(frame, text="Save Filtered Result", command=filter_save)
+save_button = tk.Button(frame, text="Save as PNG", command=filter_save)
 save_button.pack(pady=10)
 
 # result_text = tk.Text(frame, height=10, width=40)

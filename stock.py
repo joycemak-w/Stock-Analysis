@@ -169,16 +169,16 @@ def rsi_macd_chart(selected_symbol):
     macd_object = ta.trend.MACD(df['close'])
     df['MACD'] = macd_object.macd()
     df['MACD_Signal'] = macd_object.macd_signal()
-    # df['MACD_Diff'] = macd_object.macd_diff()
+    df['MACD_Diff'] = macd_object.macd_diff()
 
     # Identify starting points of bullish and bearish trends
     df['Bullish_Run_Start'] = (df['MACD'] > df['MACD_Signal']) & (df['MACD'].shift(1) <= df['MACD_Signal'].shift(1))
     df['Bearish_Run_Start'] = (df['MACD'] < df['MACD_Signal']) & (df['MACD'].shift(1) >= df['MACD_Signal'].shift(1))
     # print(type(rsi.index[0]))
 
-    # Identify bullish and bearish crossover points
-    df['Bullish_Crossover'] = (df['MACD'] > df['MACD_Signal']) & (df['MACD'].shift(1) <= df['MACD_Signal'].shift(1))
-    df['Bearish_Crossover'] = (df['MACD'] < df['MACD_Signal']) & (df['MACD'].shift(1) >= df['MACD_Signal'].shift(1))
+    # Identify gold and death cross points
+    df['Golden_Cross'] = (df['MACD'] > df['MACD_Signal']) & (df['MACD'].shift(1) <= df['MACD_Signal'].shift(1))
+    df['Death_Cross'] = (df['MACD'] < df['MACD_Signal']) & (df['MACD'].shift(1) >= df['MACD_Signal'].shift(1))
 
     # Create two charts on the same figure.
     plt.figure(figsize=(10,8))
@@ -190,7 +190,8 @@ def rsi_macd_chart(selected_symbol):
     # First chart:
     # Plot the closing price on the first chart
     ax1.set_title('RSI and MACD')
-    df['label'] = np.where((rsi<80)&(rsi>20), 1, -1)
+    # df['label'] = np.where((rsi<70)&(rsi>30), 1, -1)
+    df['label'] = np.where((rsi<70), 1, -1)
     def plot_func(group):
         color = 'r' if (group['label'] < 0).all() else 'g'
         lw = 2.0
@@ -215,13 +216,16 @@ def rsi_macd_chart(selected_symbol):
     # Third chart
     # Plot the MACD
     ax3.set_title('Moving Average Convergence/Divergence')
+    # fast line: 12days EMA - 26days EMA
+    # EMA: higher weighting on recent price SMA: same weighting
     ax3.plot(df['MACD'], label='MACD Line', color='blue', alpha=0.5, linewidth=1)
+    # slow line
     ax3.plot(df['MACD_Signal'], label='Signal Line', color='red', alpha=0.5, linewidth=1)
-    # ax3.bar(df.index, df['MACD_Diff'], label='Histogram', color='grey', alpha=0.5)
+    ax3.bar(df.index, df['MACD_Diff'], label='Histogram', color='grey', alpha=0.5)
 
     # Markers for bullish and bearish crossover
-    ax3.scatter(df.index[df['Bullish_Crossover']], df['MACD'][df['Bullish_Crossover']], marker='^', color='g', label='Bullish Crossover')
-    ax3.scatter(df.index[df['Bearish_Crossover']], df['MACD'][df['Bearish_Crossover']], marker='v', color='r', label='Bearish Crossover')
+    ax3.scatter(df.index[df['Golden_Cross']], df['MACD'][df['Golden_Cross']], marker='^', color='g', label='Bullish Crossover')
+    ax3.scatter(df.index[df['Death_Cross']], df['MACD'][df['Death_Cross']], marker='v', color='r', label='Bearish Crossover')
     ax3.legend()
     # Display the charts
     plt.show()
